@@ -5,7 +5,9 @@
 ## Code and resources
 
 Power BI version: 2.130.754.0
+
 Python version: 3.10.5
+
 Packages: dotenv, json, os, shutil, zipfile
 
 ## Dataset
