@@ -1,0 +1,16 @@
+let
+    Fonte = Json.Document(File.Contents("")),
+    #"Convertido para Tabela" = Table.FromList(Fonte, Splitter.SplitByNothing(), null, null, ExtraValues.Error),
+    #"Column1 Expandido1" = Table.ExpandRecordColumn(#"Convertido para Tabela", "Column1", {"ts", "platform", "ms_played", "user_agent_decrypted", "master_metadata_track_name", "master_metadata_album_artist_name", "master_metadata_album_album_name", "reason_start", "reason_end"}, {"Column1.ts", "Column1.platform", "Column1.ms_played", "Column1.user_agent_decrypted", "Column1.master_metadata_track_name", "Column1.master_metadata_album_artist_name", "Column1.master_metadata_album_album_name", "Column1.reason_start", "Column1.reason_end"}),
+    #"Colunas Renomeadas" = Table.RenameColumns(#"Column1 Expandido1",{{"Column1.ts", "ts"}, {"Column1.platform", "platform"}, {"Column1.ms_played", "ms_played"}, {"Column1.user_agent_decrypted", "user_agent_decrypted"}, {"Column1.master_metadata_track_name", "master_metadata_track_name"}, {"Column1.master_metadata_album_artist_name", "master_metadata_album_artist_name"}, {"Column1.master_metadata_album_album_name", "master_metadata_album_album_name"}, {"Column1.reason_end", "reason_end"}, {"Column1.reason_start", "reason_start"}}),
+    #"Dividir Coluna por Delimitador" = Table.SplitColumn(#"Colunas Renomeadas", "platform", Splitter.SplitTextByDelimiter(" ", QuoteStyle.Csv), {"platform.1", "platform.2"}),
+    #"Dividir Coluna por Delimitador1" = Table.SplitColumn(#"Dividir Coluna por Delimitador", "user_agent_decrypted", Splitter.SplitTextByDelimiter("%", QuoteStyle.Csv), {"user_agent_decrypted.1", "user_agent_decrypted.2"}),
+    #"Dividir Coluna por Delimitador2" = Table.SplitColumn(#"Dividir Coluna por Delimitador1", "ts", Splitter.SplitTextByDelimiter("T", QuoteStyle.Csv), {"ts.1", "ts.2"}),
+    #"Colunas Removidas" = Table.RemoveColumns(#"Dividir Coluna por Delimitador2",{"platform.2", "user_agent_decrypted.2", "ts.2"}),
+    #"Tipo Alterado" = Table.TransformColumnTypes(#"Colunas Removidas",{{"platform.1", type text},  {"ts.1", type date}, {"ms_played", Int64.Type}, {"master_metadata_track_name", type text}, {"master_metadata_album_artist_name", type text}, {"master_metadata_album_album_name", type text}, {"reason_end", type text}, {"reason_start", type text}}),
+    #"Colunas Renomeadas1" = Table.RenameColumns(#"Tipo Alterado",{{"ts.1", "ts"}, {"platform.1", "platform"}, {"master_metadata_track_name", "track_name"}, {"master_metadata_album_artist_name", "artist_name"}, {"master_metadata_album_album_name", "album_name"}, {"user_agent_decrypted.1", "app"}}),
+    #"Coluna Duplicada" = Table.DuplicateColumn(#"Colunas Renomeadas1", "artist_name", "artist_name - Copiar"),
+    #"Colunas Mescladas" = Table.CombineColumns(#"Coluna Duplicada",{"track_name", "artist_name - Copiar"},Combiner.CombineTextByDelimiter(" - ", QuoteStyle.None),"track_name"),
+    #"Valor Substituído" = Table.ReplaceValue(#"Colunas Mescladas","web_player","WebPLayer",Replacer.ReplaceText,{"platform"})
+in
+    #"Valor Substituído"
