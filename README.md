@@ -1,15 +1,15 @@
 # Spotify Historical Data
----
+
 ##### Tags: data, dashboard, ETL, json, python, powerbi
 
 ## Code and resources
----
+
 Power BI version: 2.130.754.0
 Python version: 3.10.5
 Packages: dotenv, json, os, shutil, zipfile
 
 ## Dataset
----
+
 Go to https://www.spotify.com/us/account/privacy/, sign into your account and search for "Download your data" and, then click in checkbox into "Extended streaming history". It may take up 30 days for all your data be ready to download.
 
 When you get the json files, run the main.py script to unzip and clean the data. Lastly, upload the data into Power BI, copy and paste the code from "power-query.txt" file into Advanced Editor.
@@ -20,7 +20,7 @@ and check the 'Preparing Extended streaming history' to retrieve the lifetime
 history of streaming."
 
 # Dashboard
----
+
 
 The dashboard is 4 pages long:
 1) Overview: the main information about the historical streaming data such as, minutes played, distinct tracks and artists over time, most used platform and end track reason;
